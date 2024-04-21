@@ -43,16 +43,13 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            name/app
+            ghcr.io/${{ github.repository }}/redis-keys-stats
           tags: |
             type=ref,event=branch
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-      
-      - name: check tags
-        run: echo ${{ steps.meta.outputs.tags }}
-      
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
