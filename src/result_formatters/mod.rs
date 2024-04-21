@@ -1,8 +1,8 @@
 pub mod json;
 pub mod plain;
 
-use crate::stats::Result;
 use crate::config::{Config, OutputFormat};
+use crate::stats::Result;
 
 /// Call the appropriate formatter based on the output format
 pub fn call(config: &Config, result: &Result) {

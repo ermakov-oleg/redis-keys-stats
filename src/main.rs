@@ -1,10 +1,10 @@
-mod stats;
 mod config;
 mod key_prefix;
 mod result_formatters;
+mod stats;
 
-use structopt::StructOpt;
 use crate::config::Config;
+use structopt::StructOpt;
 
 /// Analyze the keys in a Redis database
 fn main() {

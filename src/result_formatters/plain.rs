@@ -2,8 +2,8 @@ use std::cmp::max;
 
 use humantime::format_duration;
 
-use crate::stats::Result;
 use crate::key_prefix::KeyPrefix;
+use crate::stats::Result;
 
 /// Options for formatting the output
 struct FormattingOptions {
@@ -102,7 +102,6 @@ fn print_tree(
     }
 }
 
-
 /// Display the count of keys
 fn display_count(prefix: &KeyPrefix, parent_prefix: &KeyPrefix) -> String {
     format!(
@@ -133,7 +132,6 @@ fn calculate_count_column_width(options: &FormattingOptions, root_prefix: &KeyPr
     let padding = 4;
     biggest_count_length(options, root_prefix, root_prefix) + padding
 }
-
 
 /// Calculate maximum count length
 fn biggest_count_length(

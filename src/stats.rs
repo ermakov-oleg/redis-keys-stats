@@ -55,9 +55,7 @@ fn analyze_count(config: &mut Config, prefix: &mut KeyPrefix) {
         .arg(config.scan_size)
         .clone();
 
-    let iter: redis::Iter<String> = scan_command
-        .iter(&mut redis_client)
-        .expect("running scan");
+    let iter: redis::Iter<String> = scan_command.iter(&mut redis_client).expect("running scan");
 
     for (i, key) in iter.enumerate() {
         if i % 10_000 == 0 && i > 0 {
