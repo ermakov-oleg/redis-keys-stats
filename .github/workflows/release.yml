@@ -33,19 +33,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
             
-      - name: Create Github Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
 
       - name: Prepare
         id: prep
         run: |
-          DOCKER_IMAGE=ghcr.io/ermakov-oleg/statsd-proxy
+          DOCKER_IMAGE=ghcr.io/ermakov-oleg/redis-keys-stats
           VERSION=noop
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
