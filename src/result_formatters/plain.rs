@@ -5,35 +5,13 @@ use humantime::format_duration;
 use crate::key_prefix::KeyPrefix;
 use crate::stats::Result;
 
-/// Options for formatting the output
-struct FormattingOptions {
-    /// The width of the key column
-    key_column_width: usize,
-    /// The width of the count column
-    count_column_width: usize,
-}
-
 pub fn call(result: &Result) {
-    let mut options = FormattingOptions {
-        key_column_width: 0,
-        count_column_width: 0,
-    };
-
-    let key_column_width = calculate_key_column_width(&options, &result.root_prefix);
-    let count_column_width = calculate_count_column_width(&options, &result.root_prefix);
-
-    options.key_column_width = key_column_width;
-    options.count_column_width = count_column_width;
+    let key_column_width = calculate_key_column_width(&result.root_prefix);
 
     println!("Took {}", format_duration(result.took));
-    println!(
-        "{:indent$} Keys Count",
-        "",
-        indent = options.key_column_width,
-    );
+    println!("{:indent$} Keys Count", "", indent = key_column_width,);
 
     print_tree(
-        &options,
         &result.root_prefix,
         &result.root_prefix,
         "".to_string(),
@@ -45,7 +23,6 @@ pub fn call(result: &Result) {
 
 /// Print the tree of key prefixes
 fn print_tree(
-    options: &FormattingOptions,
     node: &KeyPrefix,
     parent_node: &KeyPrefix,
     prefix: String,
@@ -90,8 +67,7 @@ fn print_tree(
 
         for (i, child) in sorted_nodes.iter().enumerate() {
             print_tree(
-                options,
-                &child,
+                child,
                 node,
                 prefix.to_string(),
                 false,
@@ -112,37 +88,18 @@ fn display_count(prefix: &KeyPrefix, parent_prefix: &KeyPrefix) -> String {
 }
 
 /// Calculate the width of the key column
-fn calculate_key_column_width(options: &FormattingOptions, root_prefix: &KeyPrefix) -> usize {
+fn calculate_key_column_width(root_prefix: &KeyPrefix) -> usize {
     let padding = 5;
-    biggest_key_length(options, root_prefix) + padding
+    biggest_key_length(root_prefix) + padding
 }
 
 /// Calculate maximum key length
-fn biggest_key_length(options: &FormattingOptions, prefix: &KeyPrefix) -> usize {
+fn biggest_key_length(prefix: &KeyPrefix) -> usize {
     let display_value = prefix.value.to_string();
     let length = display_value.len() + prefix.depth * 3;
 
-    prefix.children.iter().fold(length, |acc, child| {
-        max(acc, biggest_key_length(options, child.1))
-    })
-}
-
-/// Calculate the width of the count column
-fn calculate_count_column_width(options: &FormattingOptions, root_prefix: &KeyPrefix) -> usize {
-    let padding = 4;
-    biggest_count_length(options, root_prefix, root_prefix) + padding
-}
-
-/// Calculate maximum count length
-fn biggest_count_length(
-    options: &FormattingOptions,
-    prefix: &KeyPrefix,
-    parent_prefix: &KeyPrefix,
-) -> usize {
-    let display_value = display_count(prefix, parent_prefix);
-    let length = display_value.len() + prefix.depth * 3;
-
-    prefix.children.iter().fold(length, |acc, child| {
-        max(acc, biggest_count_length(options, child.1, prefix))
-    })
+    prefix
+        .children
+        .iter()
+        .fold(length, |acc, child| max(acc, biggest_key_length(child.1)))
 }

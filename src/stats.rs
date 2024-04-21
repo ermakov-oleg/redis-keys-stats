@@ -2,7 +2,6 @@ use std::cmp::min;
 use std::time::{Duration, SystemTime};
 
 use indicatif::{ProgressBar, ProgressStyle};
-use redis;
 
 use crate::config::Config;
 use crate::key_prefix::KeyPrefix;
@@ -74,9 +73,8 @@ fn analyze_count(config: &mut Config, prefix: &mut KeyPrefix) {
 /// Connect to redis
 fn connect_redis(dsn: &str) -> redis::Connection {
     let client =
-        redis::Client::open(dsn.as_ref()).expect(&format!("Failed to connect to redis ({})", dsn));
-    let connection = client
+        redis::Client::open(dsn).unwrap_or_else(|_| panic!("Failed to connect to redis ({})", dsn));
+    client
         .get_connection()
-        .expect(&format!("Failed to connect to redis ({})", dsn));
-    connection
+        .unwrap_or_else(|_| panic!("Failed to connect to redis ({})", dsn))
 }
