@@ -73,7 +73,7 @@ jobs:
         run: echo ${{ steps.prep.outputs.tags }}
       
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
