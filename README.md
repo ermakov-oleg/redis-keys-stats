@@ -61,3 +61,10 @@ OPTIONS:
     -s, --separators <separators>                        Key separators [default: .:]
 
 ```
+
+
+### Example usage in k8s
+
+```bash
+kubectl run -it --image=ghcr.io/ermakov-oleg/redis-keys-stats:latest redis-keys-stats --restart=Never --namespace=default --rm -- -c 'redis://<host>:6379/0' --progress 
+```
