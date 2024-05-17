@@ -1,8 +1,7 @@
-/// Get Redis DSN with password masked
-pub fn get_masked_dsn(dsn: &str) -> String {
-    let mut parts: Vec<&str> = dsn.split('@').collect();
-    if parts.len() == 2 {
-        parts[0] = "redis://***:***@";
-    }
-    parts.join("")
+use redis::ConnectionInfo;
+
+/// Get Redis DSN host
+pub fn get_dsn_host(dsn: &str) -> String {
+    let conn_info: ConnectionInfo = dsn.parse().expect("parsing redis url");
+    return format!("{}/{}", conn_info.addr, conn_info.redis.db);
 }
