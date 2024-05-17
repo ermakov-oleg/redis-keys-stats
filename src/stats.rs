@@ -5,6 +5,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 
 use crate::config::Config;
 use crate::key_prefix::KeyPrefix;
+use crate::utils::get_masked_dsn;
 
 /// The result of the analysis
 pub struct Result {
@@ -72,9 +73,9 @@ fn analyze_count(config: &mut Config, prefix: &mut KeyPrefix) {
 
 /// Connect to redis
 fn connect_redis(dsn: &str) -> redis::Connection {
-    let client =
-        redis::Client::open(dsn).unwrap_or_else(|_| panic!("Failed to connect to redis ({})", dsn));
+    let client = redis::Client::open(dsn)
+        .unwrap_or_else(|_| panic!("Failed to connect to redis ({})", get_masked_dsn(dsn)));
     client
         .get_connection()
-        .unwrap_or_else(|_| panic!("Failed to connect to redis ({})", dsn))
+        .unwrap_or_else(|_| panic!("Failed to connect to redis ({})", get_masked_dsn(dsn)))
 }

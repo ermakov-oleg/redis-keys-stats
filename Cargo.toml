@@ -1,6 +1,6 @@
 [package]
 name = "redis-keys-stats"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Ermakov Oleg <github@ermakov.cc>"]
 edition = "2021"
 license = "MIT"
@@ -16,3 +16,7 @@ indicatif = "^0.17"
 humantime = "^2.1"
 
 redis = "^0.25"
+
+# Prometheus metrics
+tiny_http = "^0.12"
+prometheus-client = "0.22.0"
