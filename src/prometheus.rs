@@ -1,12 +1,11 @@
 use crate::config::Config;
 use crate::key_prefix::KeyPrefix;
 use crate::stats::Result;
-use crate::utils::get_masked_dsn;
+use crate::utils::get_dsn_host;
 use prometheus_client::encoding::text::encode;
 use prometheus_client::encoding::EncodeLabelSet;
 use prometheus_client::metrics::family::Family;
 use prometheus_client::metrics::gauge::Gauge;
-use prometheus_client::metrics::histogram::{exponential_buckets, Histogram};
 use prometheus_client::registry::Registry;
 use std::io::Cursor;
 use std::thread;
@@ -17,10 +16,7 @@ lazy_static! {
     static ref KEYS_COUNT_BY_PREFIX: Family<KeyPrefixLabel, Gauge> =
         Family::<KeyPrefixLabel, Gauge>::default();
     static ref ALL_KEYS_COUNT: Family<DsnLabel, Gauge> = Family::<DsnLabel, Gauge>::default();
-    static ref SCAN_DURATION: Family<DsnLabel, Histogram> =
-        Family::<DsnLabel, Histogram>::new_with_constructor(|| Histogram::new(
-            exponential_buckets(10.0, 1.5, 20)
-        ));
+    static ref SCAN_DURATION: Family<DsnLabel, Gauge> = Family::<DsnLabel, Gauge>::default();
     static ref REGISTRY: Registry = make_registry();
 }
 
@@ -49,13 +45,13 @@ pub fn start_metrics_server(port: u16) -> JoinHandle<()> {
 
 pub fn update_metrics(config: &Config, result: &Result) {
     KEYS_COUNT_BY_PREFIX.clear();
-    let dsn = get_masked_dsn(&config.dsn);
+    let dsn = get_dsn_host(&config.dsn);
 
     let dsn_label = DsnLabel { dsn: dsn.clone() };
 
     SCAN_DURATION
         .get_or_create(&dsn_label)
-        .observe(result.took.as_secs_f64());
+        .set(result.took.as_secs() as i64);
     ALL_KEYS_COUNT
         .get_or_create(&dsn_label)
         .set(result.root_prefix.keys_count as i64);
