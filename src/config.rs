@@ -37,6 +37,18 @@ pub struct Config {
     #[structopt(long, default_value = "1000")]
     pub scan_size: usize,
 
+    /// Export metrics to Prometheus
+    #[structopt(long)]
+    pub prometheus: bool,
+
+    /// Prometheus listen address
+    #[structopt(long, default_value = "9898")]
+    pub prometheus_listen_port: u16,
+
+    /// Collect interval for Prometheus metrics in seconds
+    #[structopt(long, default_value = "600")]
+    pub collect_interval: u64,
+
     /// All keys count in db
     #[structopt(skip)]
     pub all_keys_count: usize,
@@ -49,4 +61,6 @@ pub enum OutputFormat {
     Plain,
     /// JSON output
     Json,
+    /// No output
+    None,
 }

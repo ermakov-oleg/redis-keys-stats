@@ -9,6 +9,7 @@ pub fn call(config: &Config, result: &Result) {
     let formatter = match config.output_format {
         OutputFormat::Plain => plain::call,
         OutputFormat::Json => json::call,
+        OutputFormat::None => return,
     };
     formatter(result);
 }
